@@ -8,9 +8,17 @@ export type CartItem = {
   quantity: number
 }
 
+export type Coupon = {
+  code: string
+  flat?: number
+  percent?: number
+  freeshipping?: boolean
+}
+
 export type Cart = {
   user_id: string
   items: CartItem[]
+  coupons: Coupon[]
   sub_total: number
   total: number
 }
@@ -23,6 +31,7 @@ export const makeCart = ({ user_id }): Cart => {
   return {
     user_id,
     items: [],
+    coupons: [],
     sub_total: 0,
     total: 0
   }
@@ -73,6 +82,20 @@ export const removeItemFromCart = (
     items,
     sub_total: updateCartSubtotal(items)
   }
+}
+
+export const addCouponToCart = (coupon: Coupon, cart: Cart): Cart => {
+  if (cart.coupons.some((c) => coupon.code === c.code)) {
+    throw new Error('Cannot add same coupon twice')
+  }
+
+  return { ...cart, coupons: [...cart.coupons, coupon] }
+}
+
+export const removeCouponFromCart = (coupon: Coupon, cart: Cart): Cart => {
+  const coupons = cart.coupons.filter((c) => c.code !== coupon.code)
+
+  return { ...cart, coupons }
 }
 
 export const totalCart = (cart: Cart, sales_tax: number): Cart => {

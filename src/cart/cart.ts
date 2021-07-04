@@ -99,6 +99,13 @@ export const removeCouponFromCart = (coupon: Coupon, cart: Cart): Cart => {
   return { ...cart, coupons }
 }
 
+export const addShippingToCart = (shipping_cost: number, cart: Cart): Cart => {
+  return {
+    ...cart,
+    shipping_cost
+  }
+}
+
 export const totalCart = (cart: Cart, sales_tax: number): Cart => {
   const total_flat_coupon_reduction = cart.coupons.reduce(
     (acc, value) => (value.flat || 0) + acc,

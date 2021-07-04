@@ -6,7 +6,8 @@ import {
   removeItemFromCart,
   totalCart,
   addCouponToCart,
-  removeCouponFromCart
+  removeCouponFromCart,
+  addShippingToCart
 } from './cart'
 
 describe('cart module', () => {
@@ -339,6 +340,19 @@ describe('cart module', () => {
     })
   })
 
+  describe('addShippingToCart', () => {
+    it('should add shipping costs to cart', () => {
+      const cost_of_shipping = 5.99
+
+      const user_id = 'my-user-id'
+      const initial_cart = makeCart({ user_id })
+
+      expect(
+        addShippingToCart(cost_of_shipping, initial_cart).shipping_cost
+      ).toEqual(5.99)
+    })
+  })
+
   describe('totalCart', () => {
     it('should be able to calculate sales tax and update final total', () => {
       const user_id = 'my-user-id'
@@ -459,5 +473,7 @@ describe('cart module', () => {
           (cart_with_coupon_2.sub_total - 5) * 0.95
       )
     })
+
+    it.todo('should include shipping costs if added')
   })
 })

@@ -1,10 +1,27 @@
 <script lang="ts">
-	export let name: string
+	import Cart from './Cart.svelte'
+	import { cart } from './stores.ts'
+	import { addItemToCart } from './cart/cart.ts'
+	import type {  ShoppingItem } from './shopping-item/index.ts'
+
+	const dummy_item: ShoppingItem = {
+		id: 'dummy_item',
+		title: 'Nike Shoes',
+		description: 'Best dang shoes',
+		price: 200,
+		stock: 150
+	}
+
+	const handleAddItemClick = () => {
+		cart.update((current_cart) => addItemToCart(dummy_item, current_cart))
+	}
+
+
 </script>
 
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+	<Cart />
+	<button on:click={handleAddItemClick}>Add Dummy Item</button>
 </main>
 
 <style>

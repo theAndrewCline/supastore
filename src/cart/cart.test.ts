@@ -371,7 +371,93 @@ describe('cart module', () => {
         total: cart_with_items.sub_total * sales_tax + cart_with_items.sub_total
       })
     })
-    it.todo('should apply flat rate before precent')
-    it.todo('should update total with coupon info')
+
+    it('should update total with flat coupon info', () => {
+      const user_id = 'my-user-id'
+      const initial_cart = makeCart({ user_id })
+
+      const item: ShoppingItem = {
+        id: 'nike-shoe-12345',
+        title: 'Nike Shoes',
+        description: 'Really cool black shoes',
+        price: 60.0,
+        stock: 121
+      }
+
+      const coupon: Coupon = {
+        code: 'TAKE5',
+        flat: 5
+      }
+
+      const cart_with_items = addItemToCart(item, initial_cart, 2)
+      const cart_with_coupon = addCouponToCart(coupon, cart_with_items)
+      const sales_tax = 0.1
+
+      expect(totalCart(cart_with_coupon, sales_tax).total).toEqual(
+        (cart_with_items.sub_total - coupon.flat) * sales_tax +
+          cart_with_items.sub_total -
+          coupon.flat
+      )
+    })
+
+    it('should update total with percent coupon info', () => {
+      const user_id = 'my-user-id'
+      const initial_cart = makeCart({ user_id })
+
+      const item: ShoppingItem = {
+        id: 'nike-shoe-12345',
+        title: 'Nike Shoes',
+        description: 'Really cool black shoes',
+        price: 60.0,
+        stock: 121
+      }
+
+      const coupon: Coupon = {
+        code: 'TAKE5',
+        percent: 5
+      }
+
+      const cart_with_items = addItemToCart(item, initial_cart, 2)
+      const cart_with_coupon = addCouponToCart(coupon, cart_with_items)
+      const sales_tax = 0.1
+
+      expect(totalCart(cart_with_coupon, sales_tax).total).toEqual(
+        cart_with_items.sub_total * 0.95 * sales_tax +
+          cart_with_items.sub_total * 0.95
+      )
+    })
+
+    it('should apply flat rate before precent', () => {
+      const user_id = 'my-user-id'
+      const initial_cart = makeCart({ user_id })
+
+      const item: ShoppingItem = {
+        id: 'nike-shoe-12345',
+        title: 'Nike Shoes',
+        description: 'Really cool black shoes',
+        price: 60.0,
+        stock: 121
+      }
+
+      const coupon_1: Coupon = {
+        code: 'TAKE5',
+        flat: 5
+      }
+
+      const coupon_2: Coupon = {
+        code: 'TAKE5%',
+        percent: 5
+      }
+
+      const cart_with_items = addItemToCart(item, initial_cart, 2)
+      const cart_with_coupon_1 = addCouponToCart(coupon_1, cart_with_items)
+      const cart_with_coupon_2 = addCouponToCart(coupon_2, cart_with_coupon_1)
+      const sales_tax = 0.1
+
+      expect(totalCart(cart_with_coupon_2, sales_tax).total).toEqual(
+        (cart_with_coupon_2.sub_total - 5) * 0.95 * sales_tax +
+          (cart_with_coupon_2.sub_total - 5) * 0.95
+      )
+    })
   })
 })

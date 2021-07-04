@@ -20,6 +20,7 @@ export type Cart = {
   items: CartItem[]
   coupons: Coupon[]
   sub_total: number
+  shipping_cost?: number
   total: number
 }
 
@@ -99,8 +100,22 @@ export const removeCouponFromCart = (coupon: Coupon, cart: Cart): Cart => {
 }
 
 export const totalCart = (cart: Cart, sales_tax: number): Cart => {
+  const total_flat_coupon_reduction = cart.coupons.reduce(
+    (acc, value) => (value.flat || 0) + acc,
+    0
+  )
+
+  const total_percent_coupon_reduction =
+    (cart.coupons.reduce((acc, value) => (value.percent || 0) + acc, 0) / 100) *
+    (cart.sub_total - total_flat_coupon_reduction)
+
+  const sub_total_with_coupons =
+    cart.sub_total -
+    total_flat_coupon_reduction -
+    total_percent_coupon_reduction
+
   return {
     ...cart,
-    total: cart.sub_total * sales_tax + cart.sub_total
+    total: sub_total_with_coupons * sales_tax + sub_total_with_coupons
   }
 }

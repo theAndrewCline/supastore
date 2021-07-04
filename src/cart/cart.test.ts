@@ -474,6 +474,67 @@ describe('cart module', () => {
       )
     })
 
-    it.todo('should include shipping costs if added')
+    it('should include shipping costs if added', () => {
+      const user_id = 'my-user-id'
+      const initial_cart = makeCart({ user_id })
+
+      const item: ShoppingItem = {
+        id: 'nike-shoe-12345',
+        title: 'Nike Shoes',
+        description: 'Really cool black shoes',
+        price: 60.0,
+        stock: 121
+      }
+
+      const cost_of_shipping = 5.99
+
+      const cart_with_items = addItemToCart(item, initial_cart, 2)
+      const cart_with_shipping_cost = addShippingToCart(
+        cost_of_shipping,
+        cart_with_items
+      )
+
+      const sales_tax = 0.1
+
+      expect(totalCart(cart_with_shipping_cost, sales_tax).total).toEqual(
+        cart_with_items.sub_total * sales_tax +
+          cart_with_items.sub_total +
+          cost_of_shipping
+      )
+    })
+
+    it('should not count shipping costs if coupon is added', () => {
+      const user_id = 'my-user-id'
+      const initial_cart = makeCart({ user_id })
+
+      const item: ShoppingItem = {
+        id: 'nike-shoe-12345',
+        title: 'Nike Shoes',
+        description: 'Really cool black shoes',
+        price: 60.0,
+        stock: 121
+      }
+
+      const cost_of_shipping = 5.99
+
+      const cart_with_items = addItemToCart(item, initial_cart, 2)
+      const cart_with_shipping_cost = addShippingToCart(
+        cost_of_shipping,
+        cart_with_items
+      )
+
+      const coupon: Coupon = {
+        code: 'FREESHIP',
+        freeshipping: true
+      }
+
+      const cart_with_coupon = addCouponToCart(coupon, cart_with_shipping_cost)
+
+      const sales_tax = 0.1
+
+      expect(totalCart(cart_with_coupon, sales_tax).total).toEqual(
+        cart_with_items.sub_total * sales_tax + cart_with_items.sub_total
+      )
+    })
   })
 })

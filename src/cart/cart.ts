@@ -121,8 +121,17 @@ export const totalCart = (cart: Cart, sales_tax: number): Cart => {
     total_flat_coupon_reduction -
     total_percent_coupon_reduction
 
+  const coupons_have_free_shipping = cart.coupons.some(
+    (coupons) => coupons.freeshipping
+  )
+
+  const shipping_cost = coupons_have_free_shipping ? 0 : cart.shipping_cost || 0
+
   return {
     ...cart,
-    total: sub_total_with_coupons * sales_tax + sub_total_with_coupons
+    total:
+      sub_total_with_coupons * sales_tax +
+      sub_total_with_coupons +
+      shipping_cost
   }
 }

@@ -1,4 +1,4 @@
-export type ShoppingItem = {
+export type InventoryItem = {
   id: string
   title: string
   description: string

@@ -1,4 +1,4 @@
-import type { ShoppingItem } from '../shopping-item'
+import type { InventoryItem } from '../inventory'
 
 export type CartItem = {
   id: string
@@ -39,7 +39,7 @@ export const makeCart = ({ user_id }): Cart => {
 }
 
 export const addItemToCart = (
-  new_item: ShoppingItem,
+  new_item: InventoryItem,
   cart: Cart,
   quantity: number = 1
 ): Cart => {
@@ -62,7 +62,7 @@ export const addItemToCart = (
 }
 
 export const removeItemFromCart = (
-  item_to_remove: ShoppingItem | CartItem,
+  item_to_remove: InventoryItem | CartItem,
   cart: Cart
 ): Cart => {
   const items = cart.items

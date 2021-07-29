@@ -1,21 +1,22 @@
-import type { ShoppingItem } from '../shopping-item'
+import firebase from 'firebase'
+import type { InventoryItem } from '../inventory'
 import {
-  addItemToCart,
-  Coupon,
-  makeCart,
-  removeItemFromCart,
-  totalCart,
   addCouponToCart,
+  addItemToCart,
+  addShippingToCart,
+  Coupon,
+  newCart,
   removeCouponFromCart,
-  addShippingToCart
+  removeItemFromCart,
+  totalCart
 } from './cart'
 
 describe('cart module', () => {
-  describe('makeCart', () => {
+  describe('newCart', () => {
     it('should be able to create a cart', () => {
       const user_id = 'my-user-id'
 
-      expect(makeCart({ user_id })).toEqual({
+      expect(newCart({ user_id })).toEqual({
         user_id,
         items: [],
         sub_total: 0,
@@ -28,9 +29,9 @@ describe('cart module', () => {
   describe('addItemToCart', () => {
     it('should be able to add an item to a cart', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item_to_add: ShoppingItem = {
+      const item_to_add: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -56,9 +57,9 @@ describe('cart module', () => {
     })
     it('should be able to add multiple of one item to the cart', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item_to_add: ShoppingItem = {
+      const item_to_add: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -87,9 +88,9 @@ describe('cart module', () => {
   describe('removeItemFromCart', () => {
     it('should be able to remove item from a cart', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item_to_remove: ShoppingItem = {
+      const item_to_remove: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -106,9 +107,9 @@ describe('cart module', () => {
 
     it('should only decreament the quantity of an item if there is more than 1', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item_to_remove: ShoppingItem = {
+      const item_to_remove: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -139,9 +140,9 @@ describe('cart module', () => {
   describe('addCouponToCart', () => {
     it('should be able to add a flat rate coupon', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item: ShoppingItem = {
+      const item: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -166,9 +167,9 @@ describe('cart module', () => {
 
     it('should be able to add a percent rate coupon', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item: ShoppingItem = {
+      const item: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -193,9 +194,9 @@ describe('cart module', () => {
 
     it('should be able to add a free shipping coupon', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item: ShoppingItem = {
+      const item: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -220,9 +221,9 @@ describe('cart module', () => {
 
     it('should be able to add a compound coupon', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item: ShoppingItem = {
+      const item: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -249,9 +250,9 @@ describe('cart module', () => {
 
     it('should be able to add multiple coupons', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item: ShoppingItem = {
+      const item: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -281,9 +282,9 @@ describe('cart module', () => {
 
     it('should not be able to add the same code twice', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item: ShoppingItem = {
+      const item: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -309,9 +310,9 @@ describe('cart module', () => {
   describe('removeCouponFromCart', () => {
     it('should remove the coupon passed', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item: ShoppingItem = {
+      const item: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -345,7 +346,7 @@ describe('cart module', () => {
       const cost_of_shipping = 5.99
 
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
       expect(
         addShippingToCart(cost_of_shipping, initial_cart).shipping_cost
@@ -356,9 +357,9 @@ describe('cart module', () => {
   describe('totalCart', () => {
     it('should be able to calculate sales tax and update final total', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item_to_remove: ShoppingItem = {
+      const item_to_remove: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -388,9 +389,9 @@ describe('cart module', () => {
 
     it('should update total with flat coupon info', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item: ShoppingItem = {
+      const item: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -416,9 +417,9 @@ describe('cart module', () => {
 
     it('should update total with percent coupon info', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item: ShoppingItem = {
+      const item: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -443,9 +444,9 @@ describe('cart module', () => {
 
     it('should apply flat rate before precent', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item: ShoppingItem = {
+      const item: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -476,9 +477,9 @@ describe('cart module', () => {
 
     it('should include shipping costs if added', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item: ShoppingItem = {
+      const item: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -505,9 +506,9 @@ describe('cart module', () => {
 
     it('should not count shipping costs if coupon is added', () => {
       const user_id = 'my-user-id'
-      const initial_cart = makeCart({ user_id })
+      const initial_cart = newCart({ user_id })
 
-      const item: ShoppingItem = {
+      const item: InventoryItem = {
         id: 'nike-shoe-12345',
         title: 'Nike Shoes',
         description: 'Really cool black shoes',
@@ -535,6 +536,32 @@ describe('cart module', () => {
       expect(totalCart(cart_with_coupon, sales_tax).total).toEqual(
         cart_with_items.sub_total * sales_tax + cart_with_items.sub_total
       )
+    })
+  })
+})
+
+describe('cart db adapter', () => {
+  describe('makeCreateCart', () => {
+    it('should return a function that can create a cart in the database', async () => {
+      const firebaseConfig = {
+        apiKey: 'AIzaSyDJwAyFF4zA8oPNWl-omTybNZWKioidfD8',
+        authDomain: 'supastore.firebaseapp.com',
+        projectId: 'supastore',
+        storageBucket: 'supastore.appspot.com',
+        messagingSenderId: '794519934058',
+        appId: '1:794519934058:web:4506847362a2fd732aa613'
+      }
+
+      firebase.initializeApp(firebaseConfig)
+
+      const db = firebase.firestore()
+
+      db.useEmulator('localhost', 8080)
+
+      await db
+        .collection('carts')
+        .doc('testcart')
+        .set(newCart({ user_id: 'my-user-id' }))
     })
   })
 })

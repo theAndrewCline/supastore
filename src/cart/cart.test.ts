@@ -1,4 +1,3 @@
-import firebase from 'firebase'
 import type { InventoryItem } from '../inventory'
 import {
   addCouponToCart,
@@ -540,28 +539,3 @@ describe('cart module', () => {
   })
 })
 
-describe('cart db adapter', () => {
-  describe('makeCreateCart', () => {
-    it('should return a function that can create a cart in the database', async () => {
-      const firebaseConfig = {
-        apiKey: 'AIzaSyDJwAyFF4zA8oPNWl-omTybNZWKioidfD8',
-        authDomain: 'supastore.firebaseapp.com',
-        projectId: 'supastore',
-        storageBucket: 'supastore.appspot.com',
-        messagingSenderId: '794519934058',
-        appId: '1:794519934058:web:4506847362a2fd732aa613'
-      }
-
-      firebase.initializeApp(firebaseConfig)
-
-      const db = firebase.firestore()
-
-      db.useEmulator('localhost', 8080)
-
-      await db
-        .collection('carts')
-        .doc('testcart')
-        .set(newCart({ user_id: 'my-user-id' }))
-    })
-  })
-})

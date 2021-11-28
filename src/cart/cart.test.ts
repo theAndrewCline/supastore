@@ -26,12 +26,25 @@ describe('cart module', () => {
         total: 0
       })
     })
+
+    it('should error if no user_id is provided', () => {
+      const id = uuid()
+
+      expect(() => newCart({ id })).toThrowError()
+    })
+
+    it('should error if no id is provided', () => {
+      const user_id = uuid()
+
+      expect(() => newCart({ user_id })).toThrowError()
+    })
   })
 
   describe('addItemToCart', () => {
     it('should be able to add an item to a cart', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item_to_add: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -42,6 +55,7 @@ describe('cart module', () => {
       }
 
       expect(addItemToCart(item_to_add, initial_cart)).toEqual({
+        id,
         user_id,
         coupons: [],
         items: [
@@ -59,7 +73,8 @@ describe('cart module', () => {
     })
     it('should be able to add multiple of one item to the cart', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item_to_add: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -70,6 +85,7 @@ describe('cart module', () => {
       }
 
       expect(addItemToCart(item_to_add, initial_cart, 2)).toEqual({
+        id,
         user_id,
         coupons: [],
         items: [
@@ -90,7 +106,8 @@ describe('cart module', () => {
   describe('removeItemFromCart', () => {
     it('should be able to remove item from a cart', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item_to_remove: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -109,7 +126,8 @@ describe('cart module', () => {
 
     it('should only decreament the quantity of an item if there is more than 1', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item_to_remove: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -122,6 +140,7 @@ describe('cart module', () => {
       const cart_with_items = addItemToCart(item_to_remove, initial_cart, 2)
 
       expect(removeItemFromCart(item_to_remove, cart_with_items)).toEqual({
+        id,
         user_id,
         coupons: [],
         items: [
@@ -142,7 +161,8 @@ describe('cart module', () => {
   describe('addCouponToCart', () => {
     it('should be able to add a flat rate coupon', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -169,7 +189,8 @@ describe('cart module', () => {
 
     it('should be able to add a percent rate coupon', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -196,7 +217,8 @@ describe('cart module', () => {
 
     it('should be able to add a free shipping coupon', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -223,7 +245,8 @@ describe('cart module', () => {
 
     it('should be able to add a compound coupon', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -252,7 +275,8 @@ describe('cart module', () => {
 
     it('should be able to add multiple coupons', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -284,7 +308,8 @@ describe('cart module', () => {
 
     it('should not be able to add the same code twice', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -312,7 +337,8 @@ describe('cart module', () => {
   describe('removeCouponFromCart', () => {
     it('should remove the coupon passed', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -348,7 +374,8 @@ describe('cart module', () => {
       const cost_of_shipping = 5.99
 
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       expect(
         addShippingToCart(cost_of_shipping, initial_cart).shipping_cost
@@ -359,7 +386,8 @@ describe('cart module', () => {
   describe('totalCart', () => {
     it('should be able to calculate sales tax and update final total', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item_to_remove: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -373,6 +401,7 @@ describe('cart module', () => {
       const sales_tax = 0.1
 
       expect(totalCart(cart_with_items, sales_tax)).toEqual({
+        id,
         user_id,
         coupons: [],
         items: [
@@ -391,7 +420,8 @@ describe('cart module', () => {
 
     it('should update total with flat coupon info', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -419,7 +449,8 @@ describe('cart module', () => {
 
     it('should update total with percent coupon info', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -446,7 +477,8 @@ describe('cart module', () => {
 
     it('should apply flat rate before precent', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -479,7 +511,8 @@ describe('cart module', () => {
 
     it('should include shipping costs if added', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item: InventoryItem = {
         id: 'nike-shoe-12345',
@@ -508,7 +541,8 @@ describe('cart module', () => {
 
     it('should not count shipping costs if coupon is added', () => {
       const user_id = 'my-user-id'
-      const initial_cart = newCart({ user_id })
+      const id = uuid()
+      const initial_cart = newCart({ user_id, id })
 
       const item: InventoryItem = {
         id: 'nike-shoe-12345',

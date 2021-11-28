@@ -28,7 +28,21 @@ const updateCartSubtotal = (items: CartItem[]): number => {
   return items.reduce((acc, item) => acc + item.price * item.quantity, 0)
 }
 
-export const newCart = ({ user_id, id }): Cart => {
+export const newCart = ({
+  user_id,
+  id
+}: {
+  user_id: string
+  id: string
+}): Cart => {
+  if (!id) {
+    throw new Error('No id provided')
+  }
+
+  if (!user_id) {
+    throw new Error('No user id provided')
+  }
+
   return {
     id,
     user_id,

@@ -9,13 +9,16 @@ import {
   removeItemFromCart,
   totalCart
 } from './cart'
+import { v4 as uuid } from 'uuid'
 
 describe('cart module', () => {
   describe('newCart', () => {
     it('should be able to create a cart', () => {
       const user_id = 'my-user-id'
+      const id = uuid()
 
-      expect(newCart({ user_id })).toEqual({
+      expect(newCart({ user_id, id })).toEqual({
+        id,
         user_id,
         items: [],
         sub_total: 0,
@@ -538,4 +541,3 @@ describe('cart module', () => {
     })
   })
 })
-
